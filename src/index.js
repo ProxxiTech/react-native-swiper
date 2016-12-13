@@ -122,7 +122,8 @@ export default class extends Component {
     dotStyle: PropTypes.object,
     activeDotStyle: PropTypes.object,
     dotColor: PropTypes.string,
-    activeDotColor: PropTypes.string
+    activeDotColor: PropTypes.string,
+    scrollEnabled: PropTypes.bool
   }
 
   /**
@@ -147,7 +148,8 @@ export default class extends Component {
     autoplay: false,
     autoplayTimeout: 2.5,
     autoplayDirection: true,
-    index: 0
+    index: 0,
+    scrollEnabled: true
   }
 
   /**
@@ -298,6 +300,13 @@ export default class extends Component {
       // if `onMomentumScrollEnd` registered will be called here
       this.props.onMomentumScrollEnd && this.props.onMomentumScrollEnd(e, this.fullState(), this)
     })
+  }
+
+  onPageScroll = e => {
+    if (!e.nativeEvent.contentOffset) {
+      e.nativeEvent.contentOffset = {x: (e.nativeEvent.position + e.nativeEvent.offset) * this.state.width}
+    }
+    this.props.onScroll && this.props.onScroll(e);
   }
 
   /*
@@ -564,6 +573,7 @@ export default class extends Component {
         {...this.props}
         initialPage={this.props.loop ? this.state.index + 1 : this.state.index}
         onPageSelected={this.onScrollEnd}
+        onPageScroll={this.onPageScroll}
         style={{flex: 1}}>
         {pages}
       </ViewPagerAndroid>
